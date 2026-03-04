@@ -1,0 +1,137 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build:
+      context: ./services/backend/user-service
+      dockerfile: ../../../docker/Dockerfile.user-service
+    ports:
+      - "${USER_SERVICE_PORT}:8081"
+    depends_on:
+      - user-mysql
+    environment:
+      DB_HOST: user-mysql
+      DB_PORT: 3306
+      DB_USER: ${USER_DB_USER}
+      DB_PASSWORD: ${USER_DB_PASSWORD}
+      DB_NAME: ${USER_DB_NAME}
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "${USER_MYSQL_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${USER_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${USER_DB_NAME}
+      MYSQL_USER: ${USER_DB_USER}
+      MYSQL_PASSWORD: ${USER_DB_PASSWORD}
+    volumes:
+      - user-mysql-data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+  product-service:
+    build:
+      context: ./services/backend/product-service
+      dockerfile: ../../../docker/Dockerfile.product-service
+    ports:
+      - "${PRODUCT_SERVICE_PORT}:8082"
+    depends_on:
+      - product-mysql
+    environment:
+      DB_HOST: product-mysql
+      DB_PORT: 3306
+      DB_USER: ${PRODUCT_DB_USER}
+      DB_PASSWORD: ${PRODUCT_DB_PASSWORD}
+      DB_NAME: ${PRODUCT_DB_NAME}
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  product-mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "${PRODUCT_MYSQL_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PRODUCT_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${PRODUCT_DB_NAME}
+      MYSQL_USER: ${PRODUCT_DB_USER}
+      MYSQL_PASSWORD: ${PRODUCT_DB_PASSWORD}
+    volumes:
+      - product-mysql-data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+  order-service:
+    build:
+      context: ./services/backend/order-service
+      dockerfile: ../../../docker/Dockerfile.order-service
+    ports:
+      - "${ORDER_SERVICE_PORT}:8083"
+    depends_on:
+      - order-mysql
+    environment:
+      DB_HOST: order-mysql
+      DB_PORT: 3306
+      DB_USER: ${ORDER_DB_USER}
+      DB_PASSWORD: ${ORDER_DB_PASSWORD}
+      DB_NAME: ${ORDER_DB_NAME}
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  order-mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "${ORDER_MYSQL_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ORDER_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${ORDER_DB_NAME}
+      MYSQL_USER: ${ORDER_DB_USER}
+      MYSQL_PASSWORD: ${ORDER_DB_PASSWORD}
+    volumes:
+      - order-mysql-data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+volumes:
+  user-mysql-data:
+  product-mysql-data:
+  order-mysql-data:
+
+networks:
+  microservices-network:
+    driver: bridge
