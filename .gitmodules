@@ -1,0 +1,9 @@
+[submodule "services/backend/user-service"]
+	path = services/backend/user-service
+	url = git@github.com:farkhanisturkia/user-service.git
+[submodule "services/backend/product-service"]
+	path = services/backend/product-service
+	url = git@github.com:farkhanisturkia/product-service.git
+[submodule "services/backend/order-service"]
+	path = services/backend/order-service
+	url = git@github.com:farkhanisturkia/order-service.git
