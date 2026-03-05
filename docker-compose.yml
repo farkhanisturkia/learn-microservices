@@ -16,20 +16,33 @@ services:
       timeout: 5s
       retries: 5
 
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    ports:
+      - "${REDIS_EXPOSE_PORT}:5540"
+    networks:
+      - microservices-network
+
   user-service:
     build:
       context: ./services/backend/user-service
       dockerfile: ../../../docker/Dockerfile.user-service
+    container_name: user-service
     ports:
       - "${USER_SERVICE_EXPOSE_PORT}:${USER_SERVICE_PORT}"
     depends_on:
       - user-mysql
+      - user-redis
     environment:
       DB_HOST: user-mysql
       DB_PORT: 3306
       DB_USER: ${USER_DB_USER}
       DB_PASSWORD: ${USER_DB_PASSWORD}
       DB_NAME: ${USER_DB_NAME}
+      REDIS_HOST: user-redis
+      REDIS_PORT: 6379
+      REDIS_PASS: ""
     networks:
       - microservices-network
     healthcheck:
@@ -38,8 +51,17 @@ services:
       timeout: 5s
       retries: 5
 
+  user-redis:
+    image: redis:7
+    container_name: user-redis
+    ports:
+      - "${REDIS_USER_EXPOSE_PORT}:6379"
+    networks:
+      - microservices-network
+
   user-mysql:
     image: mysql:5.7
+    container_name: user-mysql
     restart: always
     ports:
       - "${USER_MYSQL_PORT}:3306"
@@ -57,16 +79,21 @@ services:
     build:
       context: ./services/backend/product-service
       dockerfile: ../../../docker/Dockerfile.product-service
+    container_name: product-service
     ports:
       - "${PRODUCT_SERVICE_EXPOSE_PORT}:${PRODUCT_SERVICE_PORT}"
     depends_on:
       - product-mysql
+      - product-redis
     environment:
       DB_HOST: product-mysql
       DB_PORT: 3306
       DB_USER: ${PRODUCT_DB_USER}
       DB_PASSWORD: ${PRODUCT_DB_PASSWORD}
       DB_NAME: ${PRODUCT_DB_NAME}
+      REDIS_HOST: product-redis
+      REDIS_PORT: 6379
+      REDIS_PASS: ""
     networks:
       - microservices-network
     healthcheck:
@@ -75,8 +102,17 @@ services:
       timeout: 5s
       retries: 5
 
+  product-redis:
+    image: redis:7
+    container_name: product-redis
+    ports:
+      - "${REDIS_PRODUCT_EXPOSE_PORT}:6379"
+    networks:
+      - microservices-network
+
   product-mysql:
     image: mysql:5.7
+    container_name: product-mysql
     restart: always
     ports:
       - "${PRODUCT_MYSQL_PORT}:3306"
@@ -94,16 +130,21 @@ services:
     build:
       context: ./services/backend/order-service
       dockerfile: ../../../docker/Dockerfile.order-service
+    container_name: order-service
     ports:
       - "${ORDER_SERVICE_EXPOSE_PORT}:${ORDER_SERVICE_PORT}"
     depends_on:
       - order-mysql
+      - order-redis
     environment:
       DB_HOST: order-mysql
       DB_PORT: 3306
       DB_USER: ${ORDER_DB_USER}
       DB_PASSWORD: ${ORDER_DB_PASSWORD}
       DB_NAME: ${ORDER_DB_NAME}
+      REDIS_HOST: order-redis
+      REDIS_PORT: 6379
+      REDIS_PASS: ""
     networks:
       - microservices-network
     healthcheck:
@@ -112,8 +153,17 @@ services:
       timeout: 5s
       retries: 5
 
+  order-redis:
+    image: redis:7
+    container_name: order-redis
+    ports:
+      - "${REDIS_ORDER_EXPOSE_PORT}:6379"
+    networks:
+      - microservices-network
+
   order-mysql:
     image: mysql:5.7
+    container_name: order-mysql
     restart: always
     ports:
       - "${ORDER_MYSQL_PORT}:3306"
