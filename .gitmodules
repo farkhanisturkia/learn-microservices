@@ -7,3 +7,6 @@
 [submodule "services/backend/order-service"]
 	path = services/backend/order-service
 	url = git@github.com:farkhanisturkia/order-service.git
+[submodule "services/frontend/lp-msroot"]
+	path = services/frontend/lp-msroot
+	url = git@github.com:farkhanisturkia/lp-msroot.git
