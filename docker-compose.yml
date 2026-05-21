@@ -6,6 +6,7 @@ services:
         context: ./services/frontend/lp-msroot
         dockerfile: ../../../docker/Dockerfile.lp-msroot
       container_name: lp-msroot
+      restart: unless-stopped
       ports:
         - "${LP_MSROOT_EXPOSE_PORT}:80"
       networks:
@@ -16,6 +17,7 @@ services:
         context: ./services/frontend/lp-msnews
         dockerfile: ../../../docker/Dockerfile.lp-msnews
       container_name: lp-msnews
+      restart: unless-stopped
       ports:
         - "${LP_MSNEWS_EXPOSE_PORT}:80"
       networks:
