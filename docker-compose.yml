@@ -11,6 +11,16 @@ services:
       networks:
         - microservices-network
 
+  lp-msnews:
+      build:
+        context: ./services/frontend/lp-msnews
+        dockerfile: ../../../docker/Dockerfile.lp-msnews
+      container_name: lp-msnews
+      ports:
+        - "${LP_MSNEWS_EXPOSE_PORT}:80"
+      networks:
+        - microservices-network
+
 networks:
   microservices-network:
     driver: bridge

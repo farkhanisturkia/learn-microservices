@@ -10,3 +10,6 @@
 [submodule "services/frontend/lp-msroot"]
 	path = services/frontend/lp-msroot
 	url = git@github.com:farkhanisturkia/lp-msroot.git
+[submodule "services/frontend/lp-msnews"]
+	path = services/frontend/lp-msnews
+	url = git@github.com:farkhanisturkia/lp-msnews.git
