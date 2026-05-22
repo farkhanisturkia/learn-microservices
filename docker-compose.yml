@@ -3,8 +3,8 @@ version: '3.9'
 services:
   lp-msroot:
       build:
-        context: ./services/frontend/lp-msroot
-        dockerfile: ../../../docker/Dockerfile.lp-msroot
+        context: .
+        dockerfile: ./docker/Dockerfile.lp-msroot
       container_name: lp-msroot
       restart: unless-stopped
       ports:
@@ -14,8 +14,8 @@ services:
 
   lp-msnews:
       build:
-        context: ./services/frontend/lp-msnews
-        dockerfile: ../../../docker/Dockerfile.lp-msnews
+        context: .
+        dockerfile: ./docker/Dockerfile.lp-msnews
       container_name: lp-msnews
       restart: unless-stopped
       ports:
